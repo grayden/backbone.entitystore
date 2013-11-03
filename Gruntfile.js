@@ -17,6 +17,8 @@ module.exports = function(grunt) {
       options: {
         specs: 'specs/*.spec.js',
         vendor: [
+          'vendor/jquery.min.js',
+          'node_modules/sinon/pkg/sinon.js',
           'node_modules/underscore/underscore.js',
           'node_modules/backbone/backbone.js'
         ]
