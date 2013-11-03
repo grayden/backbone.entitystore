@@ -37,5 +37,16 @@ describe("Backbone.EntityStore", function () {
       this.requests[0].respond(200, { "Content-type": "application/json" }, '{ "id": 1 }');
       expect(spy).toHaveBeenCalled();
     });
+
+
+    it("should add a fetched model to the collection so that it doesn't need to be fetched again", function () {
+      this.entityStore.get(1);
+      this.requests[0].respond(200, { "Content-type": "application/json" }, '{ "id": 1, "name": "jimmy" }');
+
+      expect(this.entityStore.howManyCached()).toBe(1);
+      
+      var aKiwi = this.entityStore.get(1);
+      expect(aKiwi.get("name")).toBe("jimmy");
+    });
   });
 });
