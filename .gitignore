@@ -1,3 +1,5 @@
 node_modules/
 _SpecRunner.html
 .grunt/
+npm-debug.log
+*.swp
