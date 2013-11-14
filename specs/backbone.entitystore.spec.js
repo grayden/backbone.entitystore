@@ -18,6 +18,8 @@ describe("Backbone.EntityStore", function () {
         model: KiwiModel,
         collection: KiwiCollection
       });
+
+      this.spy = jasmine.createSpy("callback");
     });
 
     describe("from the collection", function () {
@@ -29,13 +31,14 @@ describe("Backbone.EntityStore", function () {
 
       it("should be able to fetch a model by id", function () {
         var fetchedModel = this.entityStore.get(1);
-        expect(fetchedModel.get('name')).toBe('kiwi');
+        fetchedModel.done(this.spy);
+        expect(this.spy.mostRecentCall.args[0].get('name')).toBe('kiwi');
       });
 
       it("should be able to fetch a model by model", function () {
         var model = new this.KiwiModel({id : 1});
-        var fetchedModel = this.entityStore.get(model);
-        expect(fetchedModel.get('name')).toBe('kiwi');
+        var fetchedModel = this.entityStore.get(model).done(this.spy);
+        expect(this.spy.mostRecentCall.args[0].get('name')).toBe('kiwi');
       });
 
     });
@@ -51,23 +54,17 @@ describe("Backbone.EntityStore", function () {
       });
 
       it("should be able to get a model that is not in the collection using and ajax request", function () {
-        var spy = jasmine.createSpy('callback');
-        this.entityStore.get(1).done(spy);
+        this.entityStore.get(1).done(this.spy);
         this.requests[0].respond(200, { "Content-type": "application/json" }, '{ "id": 1 }');
-        expect(spy).toHaveBeenCalled();
+        expect(this.spy).toHaveBeenCalled();
       });
 
 
-      it("should add a fetched model to the collection so that it doesn't need to be fetched again", function () {
+      it("it should add the model to the collection after it has been fecthed", function () {
         this.entityStore.get(1);
-        this.requests[0].respond(200, { "Content-type": "application/json" }, '{ "id": 1, "name": "jimmy" }');
-
+        this.requests[0].respond(200, { "Content-type": "application/json" }, '{ "id": 1 }');
         expect(this.entityStore.collection.length).toBe(1);
-        
-        var aKiwi = this.entityStore.get(1);
-        expect(aKiwi.get("name")).toBe("jimmy");
       });
-
 
       afterEach(function () {
         this.xhr.restore();
