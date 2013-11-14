@@ -27,6 +27,11 @@ describe("Backbone.EntityStore", function () {
         ) 
       });
 
+      it("should be able to fetch a model by id", function () {
+        var fetchedModel = this.entityStore.get(1);
+        expect(fetchedModel.get('name')).toBe('kiwi');
+      });
+
       it("should be able to fetch a model by model", function () {
         var model = new this.KiwiModel({id : 1});
         var fetchedModel = this.entityStore.get(model);
