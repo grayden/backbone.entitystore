@@ -72,4 +72,31 @@ describe("Backbone.EntityStore", function () {
       });
     });
   });
+
+  describe("building a proxy collection", function () {
+    beforeEach(function () {
+      var collection = this.entityStore.collection;
+
+      collection.add([
+        {a:1},
+        {a:2},
+        {a:3}
+      ]);
+    });
+
+    describe("mapped collection", function () {
+
+      it("should be able to build a mapped collection", function () {
+        var mapped = this.entityStore.map(function (model) {
+          return {a: model.get('a')*2};
+        });
+
+        expect(mapped.length).toBe(3);
+
+        expect(mapped.at(0).get('a')).toBe(2);
+        expect(mapped.at(1).get('a')).toBe(4);
+        expect(mapped.at(2).get('a')).toBe(6);
+      });
+    });
+  });
 });

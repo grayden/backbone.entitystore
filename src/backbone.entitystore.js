@@ -18,6 +18,10 @@
       var newModelInstance = new this.modelType({ id: id });
       this.collection.add(newModelInstance);
       return newModelInstance.fetch();
+    },
+    map: function(mapper) {
+      var mappedModels = this.collection.map(mapper);
+      return new this.collectionType(mappedModels);
     }
   });
 })(Backbone);
