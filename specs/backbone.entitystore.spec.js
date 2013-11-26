@@ -86,16 +86,26 @@ describe("Backbone.EntityStore", function () {
 
     describe("mapped collection", function () {
 
-      it("should be able to build a mapped collection", function () {
-        var mapped = this.entityStore.map(function (model) {
+      var mapped;
+
+      beforeEach(function () {
+        mapped = this.entityStore.map(function (model) {
           return {a: model.get('a')*2};
         });
+      });
 
+      it("should be able to build a mapped collection", function () {
         expect(mapped.length).toBe(3);
 
         expect(mapped.at(0).get('a')).toBe(2);
         expect(mapped.at(1).get('a')).toBe(4);
         expect(mapped.at(2).get('a')).toBe(6);
+      });
+
+      it("should be able to add a model to the original collection throught the mapped collection", function () {
+        mapped.add({a:20});
+        expect(this.entityStore.collection.length).toBe(4);
+        expect(this.entityStore.collection.at(3).get('a')).toBe(20); 
       });
     });
   });

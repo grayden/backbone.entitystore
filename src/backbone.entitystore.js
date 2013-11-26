@@ -21,7 +21,19 @@
     },
     map: function(mapper) {
       var mappedModels = this.collection.map(mapper);
-      return new this.collectionType(mappedModels);
-    }
+      return this.build(mappedModels);
+    },
+
+
+    build: function (models) {
+      var proxyCollection = new this.collectionType(models);  
+
+      proxyCollection.on('add', _.bind(this.add, this));
+
+      return proxyCollection;
+    },
+    add: function (models, collection, options) {
+      this.collection.add(models);
+    } 
   });
 })(Backbone);
