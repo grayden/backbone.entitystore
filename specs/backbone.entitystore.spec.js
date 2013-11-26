@@ -1,4 +1,18 @@
 describe("Backbone.EntityStore", function () {
+
+  beforeEach(function () {
+    var KiwiModel = this.KiwiModel = Backbone.Model.extend({
+      url: '/api/kiwis'
+    });
+
+    var KiwiCollection = Backbone.Collection.extend({
+      url: '/api/kiwis',
+      model: KiwiModel
+    });
+    this.entityStore = new Backbone.EntityStore({
+      collection: KiwiCollection
+    });
+  });
   
   it("should exist", function () {
     expect(Backbone.EntityStore).toBeDefined();
@@ -6,19 +20,6 @@ describe("Backbone.EntityStore", function () {
 
   describe ("requesting a model", function () {
     beforeEach(function () {
-      var KiwiModel = this.KiwiModel = Backbone.Model.extend({
-        url: '/api/kiwis'
-      });
-
-      var KiwiCollection = Backbone.Collection.extend({
-        url: '/api/kiwis',
-        model: KiwiModel
-      });
-      this.entityStore = new Backbone.EntityStore({
-        model: KiwiModel,
-        collection: KiwiCollection
-      });
-
       this.spy = jasmine.createSpy("callback");
     });
 

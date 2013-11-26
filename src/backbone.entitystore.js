@@ -1,8 +1,8 @@
 (function (Backbone) {
   var EntityStore = Backbone.EntityStore = function (attrs) {
-    this.modelType = attrs.model;
     this.collectionType = attrs.collection;
     this.collection = new this.collectionType();
+    this.modelType = this.collection.model;
   }; 
 
   _.extend(EntityStore.prototype, {
