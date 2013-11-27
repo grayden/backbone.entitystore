@@ -1,43 +1,33 @@
 (function (Backbone) {
-  var EntityStore = Backbone.EntityStore = function (attrs) {
-    this.collectionType = attrs.collection;
-    this.collection = new this.collectionType();
-    this.modelType = this.collection.model;
-  }; 
+  var EntityStore = Backbone.EntityStore = Backbone.Collection.extend({
 
-  _.extend(EntityStore.prototype, {
-    get: function (model) {
+    request: function (model) {
       var id = model.id ? model.id : model;
-      if (this.collection.get(id))
+      if (this.get(id))
       {
         var deferred = jQuery.Deferred(); 
-        var model = this.collection.get(id);
+        var model = this.get(id);
         deferred.resolve(model);
         return deferred;
       } 
-      var newModelInstance = new this.modelType({ id: id });
-      this.collection.add(newModelInstance);
+      var newModelInstance = new this.model({ id: id });
+      this.add(newModelInstance);
       return newModelInstance.fetch();
     },
-    map: function(mapper) {
-      var mappedModels = this.collection.map(mapper);
+
+    proxyMapped: function(mapper) {
+      var mappedModels = this.map(mapper);
       return this.build(mappedModels);
     },
 
 
     build: function (models) {
-      var proxyCollection = new this.collectionType(models);  
+      var proxyCollection = new Backbone.Collection(models);  
 
       proxyCollection.on('add', _.bind(this.add, this));
       proxyCollection.on('remove', _.bind(this.remove, this));
 
       return proxyCollection;
-    },
-    add: function (models, collection, options) {
-      this.collection.add(models);
-    },
-    remove: function (models, collection, options) {
-      this.collection.remove(models);
     }
   });
 })(Backbone);

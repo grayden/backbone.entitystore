@@ -5,13 +5,12 @@ describe("Backbone.EntityStore", function () {
       url: '/api/kiwis'
     });
 
-    var KiwiCollection = Backbone.Collection.extend({
+    this.KiwiStore = Backbone.EntityStore.extend({
       url: '/api/kiwis',
       model: KiwiModel
     });
-    this.entityStore = new Backbone.EntityStore({
-      collection: KiwiCollection
-    });
+
+    this.entityStore = new this.KiwiStore();
   });
   
   it("should exist", function () {
@@ -25,20 +24,20 @@ describe("Backbone.EntityStore", function () {
 
     describe("from the collection", function () {
       beforeEach(function () {
-        this.entityStore.collection.add(
+        this.entityStore.add(
           { id: 1, name: "kiwi" }
         ) 
       });
 
       it("should be able to fetch a model by id", function () {
-        var fetchedModel = this.entityStore.get(1);
+        var fetchedModel = this.entityStore.request(1);
         fetchedModel.done(this.spy);
         expect(this.spy.mostRecentCall.args[0].get('name')).toBe('kiwi');
       });
 
       it("should be able to fetch a model by model", function () {
         var model = new this.KiwiModel({id : 1});
-        var fetchedModel = this.entityStore.get(model).done(this.spy);
+        var fetchedModel = this.entityStore.request(model).done(this.spy);
         expect(this.spy.mostRecentCall.args[0].get('name')).toBe('kiwi');
       });
 
@@ -54,17 +53,17 @@ describe("Backbone.EntityStore", function () {
         };
       });
 
-      it("should be able to get a model that is not in the collection using and ajax request", function () {
-        this.entityStore.get(1).done(this.spy);
+      it("should be able to get a model that is not in the collection using an ajax request", function () {
+        this.entityStore.request(1).done(this.spy);
         this.requests[0].respond(200, { "Content-type": "application/json" }, '{ "id": 1 }');
         expect(this.spy).toHaveBeenCalled();
       });
 
 
       it("it should add the model to the collection after it has been fecthed", function () {
-        this.entityStore.get(1);
+        this.entityStore.request(1);
         this.requests[0].respond(200, { "Content-type": "application/json" }, '{ "id": 1 }');
-        expect(this.entityStore.collection.length).toBe(1);
+        expect(this.entityStore.length).toBe(1);
       });
 
       afterEach(function () {
@@ -75,9 +74,7 @@ describe("Backbone.EntityStore", function () {
 
   describe("building a proxy collection", function () {
     beforeEach(function () {
-      var collection = this.entityStore.collection;
-
-      collection.add([
+      this.entityStore.add([
         {id: 1, a:1},
         {id: 2, a:2},
         {id: 3, a:3}
@@ -89,7 +86,7 @@ describe("Backbone.EntityStore", function () {
       var mapped;
 
       beforeEach(function () {
-        mapped = this.entityStore.map(function (model) {
+        mapped = this.entityStore.proxyMapped(function (model) {
           return {id: model.id, a: model.get('a')*2};
         });
       });
@@ -104,16 +101,16 @@ describe("Backbone.EntityStore", function () {
 
       it("should be able to add a model to the original collection through the mapped collection", function () {
         mapped.add({a:20});
-        expect(this.entityStore.collection.length).toBe(4);
-        expect(this.entityStore.collection.at(3).get('a')).toBe(20); 
+        expect(this.entityStore.length).toBe(4);
+        expect(this.entityStore.at(0).get('a')).toBe(20); 
       });
 
       it("should be able to remove a model on the original collection from the mapped collection", function () {
         var firstModel = mapped.first();
         mapped.remove(firstModel);
         
-        expect(this.entityStore.collection.length).toBe(2);
-        expect(this.entityStore.collection.first().id).not.toBe(firstModel.id);
+        expect(this.entityStore.length).toBe(2);
+        expect(this.entityStore.first().id).not.toBe(firstModel.id);
       });
     });
   });
