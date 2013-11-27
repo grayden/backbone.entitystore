@@ -110,12 +110,6 @@ describe("Backbone.EntityStore", function () {
         expect(mapped.at(2).get('a')).toBe(6);
       });
 
-      it("should not be able to add a model to the original collection through the mapped collection", function () {
-        expect(mapped.add).toThrow(new Error("Cannot add models on a mapped collection."));
-        expect(mapped.length).toBe(3);
-        expect(this.entityStore.length).toBe(3);
-      });
-
       it("should be able to remove a model on the original collection from the mapped collection", function () {
         var firstModel = mapped.first();
         mapped.remove(firstModel);
