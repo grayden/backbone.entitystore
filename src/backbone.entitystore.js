@@ -29,11 +29,15 @@
       var proxyCollection = new this.collectionType(models);  
 
       proxyCollection.on('add', _.bind(this.add, this));
+      proxyCollection.on('remove', _.bind(this.remove, this));
 
       return proxyCollection;
     },
     add: function (models, collection, options) {
       this.collection.add(models);
-    } 
+    },
+    remove: function (models, collection, options) {
+      this.collection.remove(models);
+    }
   });
 })(Backbone);

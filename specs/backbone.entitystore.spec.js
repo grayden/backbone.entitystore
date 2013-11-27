@@ -102,10 +102,18 @@ describe("Backbone.EntityStore", function () {
         expect(mapped.at(2).get('a')).toBe(6);
       });
 
-      it("should be able to add a model to the original collection throught the mapped collection", function () {
+      it("should be able to add a model to the original collection through the mapped collection", function () {
         mapped.add({a:20});
         expect(this.entityStore.collection.length).toBe(4);
         expect(this.entityStore.collection.at(3).get('a')).toBe(20); 
+      });
+
+      it("should be able to remove a model on the original collection from the mapped collection", function () {
+        var firstModel = mapped.first();
+        mapped.remove(firstModel);
+        
+        expect(this.entityStore.collection.length).toBe(2);
+        expect(this.entityStore.collection.first().id).not.toBe(firstModel.id);
       });
     });
   });
