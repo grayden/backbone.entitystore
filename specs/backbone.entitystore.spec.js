@@ -12,9 +12,20 @@ describe("Backbone.EntityStore", function () {
 
     this.entityStore = new this.KiwiStore();
   });
-  
-  it("should exist", function () {
-    expect(Backbone.EntityStore).toBeDefined();
+
+  describe("startup", function () {
+    it("should exist", function () {
+      expect(Backbone.EntityStore).toBeDefined();
+    });
+
+    it("should be instantiated", function () {
+      expect(this.entityStore).toBeTruthy();
+    });
+
+    it("should have its properties", function () {
+      expect(this.entityStore.url).toBe('/api/kiwis');
+      expect(this.entityStore.model).toBe(this.KiwiModel);
+    });
   });
 
   describe ("requesting a model", function () {
