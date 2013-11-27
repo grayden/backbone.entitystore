@@ -78,9 +78,9 @@ describe("Backbone.EntityStore", function () {
       var collection = this.entityStore.collection;
 
       collection.add([
-        {a:1},
-        {a:2},
-        {a:3}
+        {id: 1, a:1},
+        {id: 2, a:2},
+        {id: 3, a:3}
       ]);
     });
 
@@ -90,7 +90,7 @@ describe("Backbone.EntityStore", function () {
 
       beforeEach(function () {
         mapped = this.entityStore.map(function (model) {
-          return {a: model.get('a')*2};
+          return {id: model.id, a: model.get('a')*2};
         });
       });
 
