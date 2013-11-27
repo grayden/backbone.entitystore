@@ -17,17 +17,19 @@
 
     proxyMapped: function(mapper) {
       var mappedModels = this.map(mapper);
-      return this.build(mappedModels);
+      var mappedCollectionType = Backbone.Collection.extend(this.mappedOverrides);
+      var mappedCollection = new mappedCollectionType();
+      mappedCollection.set(mappedModels);
+
+      mappedCollection.on('remove', _.bind(this.remove, this));
+
+      return mappedCollection;
     },
 
-
-    build: function (models) {
-      var proxyCollection = new Backbone.Collection(models);  
-
-      proxyCollection.on('add', _.bind(this.add, this));
-      proxyCollection.on('remove', _.bind(this.remove, this));
-
-      return proxyCollection;
+    mappedOverrides: {
+      add: function() {
+        throw new Error("Cannot add models on a mapped collection.");
+      }
     }
   });
 })(Backbone);
