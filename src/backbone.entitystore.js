@@ -17,11 +17,28 @@
 
     proxyMapped: function(mapper) {
       var mappedModels = this.map(mapper);
-      var mappedCollection = new Backbone.Collection(mappedModels);
+      var mappedCollection = new Backbone.MappedCollection();
+      mappedCollection.mapper = mapper;
+      mappedCollection.parentCollection = this;
+      mappedCollection.set(mappedModels);
 
       mappedCollection.on('remove', _.bind(this.remove, this));
+      mappedCollection.on('add', _.bind(this.add, this));
+      
+      this.on('add', _.bind(mappedCollection.addMapped, mappedCollection));
 
       return mappedCollection;
+    }
+  });
+
+  Backbone.MappedCollection = Backbone.Collection.extend({
+    add: function (models) {
+      this.parentCollection.add(models);
+    },
+    addMapped: function (models) {
+      models = _.isArray(models) ? models : [models];
+      mappedModels = _.map(models, this.mapper);
+      Backbone.Collection.prototype.add.apply(this, [mappedModels, {merge: true}]);
     }
   });
 })(Backbone);

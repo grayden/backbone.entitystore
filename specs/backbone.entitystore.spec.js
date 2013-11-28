@@ -117,6 +117,17 @@ describe("Backbone.EntityStore", function () {
         expect(this.entityStore.length).toBe(2);
         expect(this.entityStore.first().id).not.toBe(firstModel.id);
       });
+
+      it("should be able to add a model to the original collection via the mapped collection and have it mapped", function () {
+        var newModel = new Backbone.Model({id: 6, a:5});
+        mapped.add(newModel);
+
+        expect(mapped.length).toBe(4);
+        expect(this.entityStore.length).toBe(4);
+        
+        expect(this.entityStore.get(newModel).get('a')).toBe(5);
+        expect(mapped.get(newModel).get('a')).toBe(10);
+      });
     });
   });
 });
