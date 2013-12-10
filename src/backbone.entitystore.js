@@ -20,9 +20,11 @@
       var filteredCollection = new Backbone.FilteredCollection();
       filteredCollection.parentCollection = this;
       filteredCollection.filterer = filterer;
+      filteredCollection.model = this.model;
       filteredCollection.set(filteredModels);
 
       this.on('add', filteredCollection.add, filteredCollection);
+      filteredCollection.on('add', this.add, this);
 
       return filteredCollection;
     },
@@ -50,14 +52,17 @@
     addMapped: function (models) {
       models = _.isArray(models) ? models : [models];
       mappedModels = _.map(models, this.mapper);
-      Backbone.Collection.prototype.add.apply(this, [mappedModels, {merge: true}]);
+      Backbone.Collection.prototype.add.apply(this,mappedModels);
     }
   });
 
   Backbone.FilteredCollection = Backbone.Collection.extend({
     add: function (models) {
-      this.parentCollection.add(models);
       models = _.isArray(models) ? models : [models]
+      models = _.map(models, function (model) {
+        return model.get ? model : new this.model(model);
+      }, this);
+
       var filteredModels = _.filter(models, this.filterer);
       Backbone.Collection.prototype.add.call(this, filteredModels);
     }

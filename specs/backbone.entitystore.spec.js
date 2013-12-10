@@ -156,6 +156,11 @@ describe("Backbone.EntityStore", function () {
         this.entityStore.add(new this.KiwiModel({ a : 0 }));
         expect(filtered.length).toBe(2);
       });
+
+      it("should be able to add a literal object that is not a model", function () {
+        filtered.add({a : 6});
+        expect(filtered.length).toBe(3);
+      });
     });
   });
 });
