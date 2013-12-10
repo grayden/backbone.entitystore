@@ -1,4 +1,4 @@
-(function (Backbone) {
+(function (Backbone, _) {
   var EntityStore = Backbone.EntityStore = Backbone.Collection.extend({
 
     request: function (model) {
@@ -17,7 +17,12 @@
 
     proxyFiltered: function (filterer) {
       var filteredModels = this.filter(filterer);
-      var filteredCollection = new Backbone.Collection(filteredModels);
+      var filteredCollection = new Backbone.FilteredCollection();
+      filteredCollection.parentCollection = this;
+      filteredCollection.filterer = filterer;
+      filteredCollection.set(filteredModels);
+
+      this.on('add', filteredCollection.add, filteredCollection);
 
       return filteredCollection;
     },
@@ -48,4 +53,13 @@
       Backbone.Collection.prototype.add.apply(this, [mappedModels, {merge: true}]);
     }
   });
-})(Backbone);
+
+  Backbone.FilteredCollection = Backbone.Collection.extend({
+    add: function (models) {
+      this.parentCollection.add(models);
+      models = _.isArray(models) ? models : [models]
+      var filteredModels = _.filter(models, this.filterer);
+      Backbone.Collection.prototype.add.call(this, filteredModels);
+    }
+  });
+})(Backbone, _);

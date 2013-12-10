@@ -141,6 +141,21 @@ describe("Backbone.EntityStore", function () {
       it("should be able to generate a filtered collection", function () {
         expect(filtered.length).toBe(2);
       });
+
+      it("should be able to add a model to the original collection", function () {
+        filtered.add(new this.KiwiModel({ a: 5 }));
+        expect(this.entityStore.length).toBe(4);
+      });
+
+      it("should be able to add models to the proxy collection when they are added to the entity store", function () {
+        this.entityStore.add(new this.KiwiModel({ a : 6 }));
+        expect(filtered.length).toBe(3);
+      });
+
+      it("should only be able to add models to the proxy collection when they are within the limits of the filter", function () {
+        this.entityStore.add(new this.KiwiModel({ a : 0 }));
+        expect(filtered.length).toBe(2);
+      });
     });
   });
 });
