@@ -129,5 +129,18 @@ describe("Backbone.EntityStore", function () {
         expect(mapped.get(newModel).get('a')).toBe(10);
       });
     });
+    describe("filtered collection", function () {
+      var filtered;
+
+      beforeEach(function () {
+        filtered = this.entityStore.proxyFiltered(function (model) {
+          return model.get('a') > 1;
+        }); 
+      });
+
+      it("should be able to generate a filtered collection", function () {
+        expect(filtered.length).toBe(2);
+      });
+    });
   });
 });

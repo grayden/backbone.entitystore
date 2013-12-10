@@ -15,6 +15,13 @@
       return newModelInstance.fetch();
     },
 
+    proxyFiltered: function (filterer) {
+      var filteredModels = this.filter(filterer);
+      var filteredCollection = new Backbone.Collection(filteredModels);
+
+      return filteredCollection;
+    },
+
     proxyMapped: function(mapper) {
       var mappedModels = this.map(mapper);
       var mappedCollection = new Backbone.MappedCollection();
