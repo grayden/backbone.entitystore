@@ -169,6 +169,11 @@ describe("Backbone.EntityStore", function () {
           this.filtered.remove(this.filtered.first());
           expect(this.entityStore.length).toBe(2);
         });
+
+        it("should be able to remove models from the filtered collection when they are removed from the entity store", function () {
+          this.entityStore.remove(this.entityStore.last())
+          expect(this.filtered.length).toBe(1);
+        });
       });
     });
   });

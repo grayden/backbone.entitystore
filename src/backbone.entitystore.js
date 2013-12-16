@@ -27,6 +27,7 @@
       filteredCollection.on('add', this.add, this);
 
       filteredCollection.on('remove', this.remove, this);
+      this.on('remove', filteredCollection.remove, filteredCollection);
 
       return filteredCollection;
     },
