@@ -130,36 +130,45 @@ describe("Backbone.EntityStore", function () {
       });
     });
     describe("filtered collection", function () {
-      var filtered;
-
       beforeEach(function () {
-        filtered = this.entityStore.proxyFiltered(function (model) {
+        this.filtered = this.entityStore.proxyFiltered(function (model) {
           return model.get('a') > 1;
         }); 
       });
 
       it("should be able to generate a filtered collection", function () {
-        expect(filtered.length).toBe(2);
+        expect(this.filtered.length).toBe(2);
       });
 
-      it("should be able to add a model to the original collection", function () {
-        filtered.add(new this.KiwiModel({ a: 5 }));
-        expect(this.entityStore.length).toBe(4);
+      describe("when adding models", function () {
+
+        it("should be able to add a model to the original collection", function () {
+          this.filtered.add(new this.KiwiModel({ a: 5 }));
+          expect(this.entityStore.length).toBe(4);
+        });
+
+        it("should be able to add models to the proxy collection when they are added to the entity store", function () {
+          this.entityStore.add(new this.KiwiModel({ a : 6 }));
+          expect(this.filtered.length).toBe(3);
+        });
+
+        it("should only be able to add models to the proxy collection when they are within the limits of the filter", function () {
+          this.entityStore.add(new this.KiwiModel({ a : 0 }));
+          expect(this.filtered.length).toBe(2);
+        });
+
+        it("should be able to add a literal object that is not a model", function () {
+          this.filtered.add({a : 6});
+          expect(this.filtered.length).toBe(3);
+        });
       });
 
-      it("should be able to add models to the proxy collection when they are added to the entity store", function () {
-        this.entityStore.add(new this.KiwiModel({ a : 6 }));
-        expect(filtered.length).toBe(3);
-      });
+      describe("when removing models", function () {
 
-      it("should only be able to add models to the proxy collection when they are within the limits of the filter", function () {
-        this.entityStore.add(new this.KiwiModel({ a : 0 }));
-        expect(filtered.length).toBe(2);
-      });
-
-      it("should be able to add a literal object that is not a model", function () {
-        filtered.add({a : 6});
-        expect(filtered.length).toBe(3);
+        it("should be able to remove a model from the entity store using the filtered collection", function () {
+          this.filtered.remove(this.filtered.first());
+          expect(this.entityStore.length).toBe(2);
+        });
       });
     });
   });
